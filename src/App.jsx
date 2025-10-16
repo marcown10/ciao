@@ -1,75 +1,26 @@
-import React, { useState, useEffect } from 'react'
-    import { v4 as uuidv4 } from 'uuid'
+import React from 'react'
+    import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+    import Navbar from './components/Navbar'
+    import Home from './pages/Home'
+    import About from './pages/About'
+    import Projects from './pages/Projects'
+    import Contact from './pages/Contact'
+    import Footer from './components/Footer'
 
     function App() {
-      const [todos, setTodos] = useState([])
-      const [input, setInput] = useState('')
-
-      useEffect(() => {
-        const savedTodos = JSON.parse(localStorage.getItem('todos') || '[]')
-        setTodos(savedTodos)
-      }, [])
-
-      useEffect(() => {
-        localStorage.setItem('todos', JSON.stringify(todos))
-      }, [todos])
-
-      const addTodo = () => {
-        if (input.trim()) {
-          const newTodo = {
-            id: uuidv4(),
-            text: input,
-            completed: false
-          }
-          setTodos([...todos, newTodo])
-          setInput('')
-        }
-      }
-
-      const toggleComplete = (id) => {
-        const updatedTodos = todos.map(todo => 
-          todo.id === id ? { ...todo, completed: !todo.completed } : todo
-        )
-        setTodos(updatedTodos)
-      }
-
-      const deleteTodo = (id) => {
-        const filteredTodos = todos.filter(todo => todo.id !== id)
-        setTodos(filteredTodos)
-      }
-
       return (
-        <div className="todo-app">
-          <h1>Todo List</h1>
-          <div className="todo-input">
-            <input 
-              type="text" 
-              value={input} 
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Enter a new todo"
-              onKeyPress={(e) => e.key === 'Enter' && addTodo()}
-            />
-            <button onClick={addTodo}>Add</button>
+        <Router>
+          <div className="App">
+            <Navbar />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/projects" element={<Projects />} />
+              <Route path="/contact" element={<Contact />} />
+            </Routes>
+            <Footer />
           </div>
-          <ul className="todo-list">
-            {todos.map(todo => (
-              <li 
-                key={todo.id} 
-                className={`todo-item ${todo.completed ? 'completed' : ''}`}
-              >
-                <span onClick={() => toggleComplete(todo.id)}>
-                  {todo.text}
-                </span>
-                <button 
-                  className="delete-btn" 
-                  onClick={() => deleteTodo(todo.id)}
-                >
-                  Delete
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
+        </Router>
       )
     }
 
